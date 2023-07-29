@@ -1,5 +1,4 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -30,13 +29,15 @@ fun FrameWindowScope.App() {
                 Text("Choose image")
             }
 
-            if (currentImage != null) {
+            val imgFile = currentImage?.let(Paths::get)
+            if (imgFile != null) {
                 val bitmap =
                 try {
-                    Files.newInputStream(Paths.get(currentImage)).use {
+                    Files.newInputStream(imgFile).use {
                         loadImageBitmap(it)
                     }
                 } catch (e : Exception) {
+                    // TODO: log error (require to init logging lib/utils)
                     null
                 }
 
@@ -47,7 +48,6 @@ fun FrameWindowScope.App() {
                     }
                 }
             }
-
         }
     }
 }

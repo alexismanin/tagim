@@ -30,7 +30,7 @@ fun TagPane(bitmap: ImageBitmap, btnZoomFactor: Float = 1.5f) {
     // TODO: adapt image transformation to target platform.
     // Android based app would manage natively zoom and rotation.
     // However, on desktop with standard mouse control, only panning is working here.
-    val transformationState = rememberTransformableState { zoomChange, panChange, rotationChange ->
+    val transformationState = rememberTransformableState { zoomChange, panChange, _ ->
         viewScale *= zoomChange
         viewOffset += panChange
     }
