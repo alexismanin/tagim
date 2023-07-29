@@ -1,0 +1,10 @@
+= Image tagging app
+
+image::https://img.shields.io/badge/License-CeCILL--B-028181.svg[License: CeCILL-B]
+
+*Disclaimer*: The main aim of this personal project is to learn Compose Desktop.
+It can be buggy, laggy, and not very ergonomic.
+
+== Run
+
+Use build wrapper script: `./gradlew run` (linux) or `gradlew.bat run` (Windows)
