@@ -1,35 +1,32 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.loadImageBitmap
-import androidx.compose.ui.window.FrameWindowScope
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
+import androidx.compose.ui.window.*
 import java.io.File
+import java.net.URI
 import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 import javax.swing.JFileChooser
 
 @Composable
 @Preview
 fun FrameWindowScope.App() {
-    var currentImage by mutableStateOf<String?>(null)
     MaterialTheme {
         Column {
 
-            Button(onClick = { chooseImage()?.let { currentImage = it.toString() } }) {
-                Text("Choose image")
-            }
+            var currentImage by remember { mutableStateOf<Path?>(null) }
 
-            val imgFile = currentImage?.let(Paths::get)
+            MainMenu(onImageSelection = { currentImage = it })
+
+            val imgFile = currentImage
             if (imgFile != null) {
                 val bitmap =
                 try {
@@ -60,6 +57,40 @@ fun FrameWindowScope.chooseImage() : File? {
     return when (chooser.showOpenDialog(window)) {
         JFileChooser.APPROVE_OPTION -> chooser.selectedFile
         else -> null
+    }
+}
+
+@Composable
+fun Menu(title: String, dropDownContent: @Composable ColumnScope.() -> Unit) {
+    var expand by remember { mutableStateOf(false) }
+    TextButton({ expand = true }, colors = ButtonDefaults.buttonColors()) { Text(title) }
+    DropdownMenu(expanded = expand, onDismissRequest = { expand = false }) {
+        dropDownContent()
+    }
+}
+
+@Composable
+fun FrameWindowScope.MainMenu(onImageSelection: (Path) -> Unit) {
+    TopAppBar {
+        val menuButtonColors = ButtonDefaults.buttonColors()
+        TextButton(onClick = { chooseImage()?.let { onImageSelection(it.toPath()) } }, colors = menuButtonColors) {
+            Text("Open image")
+        }
+
+        var showAbout by remember { mutableStateOf(false) }
+
+        TextButton(onClick = { showAbout = !showAbout }, colors = menuButtonColors) {
+            Icon(Icons.Filled.Info, "About")
+            // TODO: rework this. It is very ugly
+            if (showAbout) {
+                Popup(focusable = true, onDismissRequest = { showAbout = false }) {
+                    Column(Modifier.background(MaterialTheme.colors.background)) {
+                        HyperLink(URI("https://cecill.info/licences/Licence_CeCILL-B_V1-en.html"), "License: CeCILL-B")
+                        HyperLink(URI("https://github.com/alexismanin/tagim"), "Source code")
+                    }
+                }
+            }
+        }
     }
 }
 
