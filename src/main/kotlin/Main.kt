@@ -14,15 +14,16 @@ import java.io.File
 import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import javax.swing.JFileChooser
 
 @Composable
 @Preview
-fun FrameWindowScope.App() {
+fun FrameWindowScope.App(args: Array<String>) {
     MaterialTheme {
         Column {
-
-            var currentImage by remember { mutableStateOf<Path?>(null) }
+            // TODO: evolve to use a list of images (annotation session)
+            var currentImage by remember { mutableStateOf<Path?>(args.firstOrNull()?.let { Paths.get(it) }) }
 
             MainMenu(onImageSelection = { currentImage = it })
 
@@ -94,8 +95,8 @@ fun FrameWindowScope.MainMenu(onImageSelection: (Path) -> Unit) {
     }
 }
 
-fun main() = application {
+fun main(args: Array<String>) = application {
     Window(onCloseRequest = ::exitApplication) {
-        App()
+        App(args)
     }
 }
